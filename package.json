@@ -31,7 +31,11 @@
             "roles": [
               "Viewer"
             ]
-          }
+          },
+    "internal-tool": { 
+        "roles": ["SystemAPI", "system-user"],
+        "tenants": ["tenant-1"]
+    }
         }
       },
 "RemoteService": {
@@ -49,4 +53,4 @@
   }
 }
   }}
-  
+
