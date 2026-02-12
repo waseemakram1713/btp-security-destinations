@@ -1,21 +1,40 @@
 # SAP BTP Security & Destinations (CAP Node.js)
 
-A production-grade implementation of the SAP Cloud Application Programming Model (CAP) focusing on security and external connectivity.
+## 🏗️ Architecture Overview
+This project demonstrates a secure, enterprise-grade SAP CAP service that integrates local business logic with external REST APIs via the SAP BTP Destination Service.
 
-## 🌟 Key Features
-- **Phase 1: Authentication**: XSUAA-style login using `mocked-auth`.
-- **Phase 2: RBAC**: Role-based access control (Admin vs. Viewer) using `@restrict` and custom logic.
-- **Phase 3: Destinations**: External API consumption via SAP BTP Destination Service.
-- **Phase 4: S2S Security**: Service-to-Service security patterns using technical users.
-- **Phase 5: Cloud Ready**: Fully configured `mta.yaml` for SAP BTP Cloud Foundry.
 
-## 🛠️ Tech Stack
-- SAP CAP (Node.js)
-- SAP Cloud SDK
-- SQLite (Local) / SAP HANA (Production)
-- XSUAA (Security)
 
-## 🚦 How to run locally
-1. `npm install`
-2. `cds watch`
-3. Use `tests.http` to test different roles (Alice, Bob, Internal-Tool).
+## 🔐 Security Flow (RBAC & S2S)
+I implemented a multi-tiered security strategy:
+1. **User Authentication**: Mocked XSUAA login for local development.
+2. **Role-Based Access Control (RBAC)**: 
+   - **Admins**: Full access to all data and sensitive fields (Stock).
+   - **Viewers**: Masked data access with specific "Public View" labels.
+3. **Service-to-Service (S2S)**: A technical user pattern (`SystemAPI` role) for automated machine-to-machine communication.
+
+
+
+## 🌐 Destination & Connectivity
+Instead of hardcoding URLs, this app uses **Logical Destinations**.
+- **Local Dev**: Uses `[development]` profile to point to a mock REST API.
+- **Production**: Uses `[production]` profile to bind to the SAP BTP Destination Service.
+- **Resilience**: Integrated `@sap-cloud-sdk/resilience` to handle timeouts and retries.
+
+## 🚀 DevOps & CI/CD
+- **MTA**: Multi-Target Application configuration for Cloud Foundry.
+- **GitHub Actions**: Automated build pipeline to verify `.mtar` generation on every push.
+
+## 💡 Lessons Learned
+- **Decoupling is Key**: Using `cds.connect.to` allowed me to swap the data source without changing my business logic.
+- **Environment Parity**: Managing `package.json` profiles is essential for a smooth "local-to-cloud" transition.
+- **JWT Inspection**: Understanding how CAP handles the `req.user` object is vital for custom security requirements.
+
+graph TD
+    User((User/System)) -->|JWT/Auth| AppRouter[App Router / Entry]
+    AppRouter -->|Authorized Request| CAP[CAP Service]
+    CAP -->|req.user.is| AuthLogic{Auth Logic}
+    AuthLogic -->|Admin| FullData[Full Data]
+    AuthLogic -->|Viewer| MaskedData[Masked Data]
+    CAP -->|cds.connect| Dest[Destination Service]
+    Dest -->|REST Call| ExtAPI((External API))
