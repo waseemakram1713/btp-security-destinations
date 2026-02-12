@@ -20,11 +20,12 @@ modules:
     build-parameters:
       builder: npm-ci
     provides:
-      - name: srv-api # required by consumers of CAP services (e.g. approuter)
+      - name: srv-api
         properties:
           srv-url: ${default-url}
     requires:
       - name: btp-security-destinations-auth
+      - name: btp-security-destinations-destination-service # 🔗 Link added here
 
 resources:
   - name: btp-security-destinations-auth
@@ -45,3 +46,10 @@ resources:
             description: 'generated'
             role-template-references:
               - '$XSAPPNAME.Viewer'
+
+  # ✨ Added Destination Service Resource below
+  - name: btp-security-destinations-destination-service
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: destination
+      service-plan: lite
