@@ -1,0 +1,64 @@
+{
+  "name": "btp-security-destinations",
+  "version": "1.0.0",
+  "description": "A simple CAP project.",
+  "dependencies": {
+    "@sap-cloud-sdk/http-client": "^4.4.0",
+    "@sap-cloud-sdk/resilience": "^4.4.0",
+    "@sap/cds": "^9",
+    "@sap/xssec": "^4",
+    "express": "^4"
+  },
+  "devDependencies": {
+    "@cap-js/sqlite": "^2",
+    "@sap/cds-dk": "^9"
+  },
+  "scripts": {
+    "start": "cds-serve"
+  },
+  "private": true,
+  "cds": {
+    "requires": {
+      "auth": {
+        "kind": "mocked-auth",
+        "users": {
+          "alice": {
+            "roles": [
+              "Admin"
+            ]
+          },
+          "bob": {
+            "roles": [
+              "Viewer"
+            ]
+          },
+          "internal-tool": {
+            "roles": [
+              "SystemAPI",
+              "system-user"
+            ],
+            "tenants": [
+              "tenant-1"
+            ]
+          }
+        }
+      },
+      "RemoteService": {
+        "kind": "rest",
+        "[development]": {
+          "credentials": {
+            "url": "https://jsonplaceholder.typicode.com"
+          }
+        },
+        "[production]": {
+          "credentials": {
+            "destination": "my-external-api"
+          }
+        }
+      }
+    }
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

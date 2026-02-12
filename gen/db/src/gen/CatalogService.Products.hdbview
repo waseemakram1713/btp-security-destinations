@@ -1,0 +1,5 @@
+VIEW CatalogService_Products AS SELECT
+  Products_0.ID,
+  Products_0.title,
+  Products_0.stock
+FROM my_project_Products AS Products_0
