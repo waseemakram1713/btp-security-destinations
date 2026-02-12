@@ -16,21 +16,14 @@
   },
   "private": true,
   "cds": {
-    "requires": {
-      "auth": {
-        "kind": "mocked-auth",
-        "users": {
-          "alice": {
-            "roles": [
-              "Admin",
-              "admin"
-            ]
-          }
-        }
-      },
-      "[production]": {
-        "auth": "xsuaa"
+  "requires": {
+    "auth": {
+      "kind": "mocked-auth",
+      "users": {
+        "alice": { "roles": ["Admin"] },
+        "bob": { "roles": ["Viewer"] }
       }
     }
   }
+}
 }
